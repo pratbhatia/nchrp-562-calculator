@@ -33,12 +33,12 @@ export default function DelayChart({ inputs, results }) {
     
     for (let x = 0; x <= xMax; x += 30) {
       const v = worksheetNum === 1 ? x / 3600 : (x / 0.7) / 3600;
-      let y = yMax * 2; // Default to off-chart
+      let y = yMax; // Default to top of chart (700)
       if (v > 0) {
         const dp_factor = (Math.exp(v * tc) - v * tc - 1) / v;
         const calcY = (3600 * DpVal) / dp_factor;
-        if (calcY > 0 && calcY < yMax * 2) {
-          y = calcY;
+        if (calcY > 0) {
+          y = Math.min(calcY, yMax);
         }
       }
       points.push({ x, y });
@@ -62,7 +62,7 @@ export default function DelayChart({ inputs, results }) {
       if (S_p_num < 3.5) {
         scVal = scVal * 0.5;
       }
-      points.push({ x, y: Math.min(scVal, yMax * 2) });
+      points.push({ x, y: Math.min(scVal, yMax) });
     }
     return points;
   };
@@ -130,7 +130,7 @@ export default function DelayChart({ inputs, results }) {
 
   // Current user point SVG coordinates
   const userSvgX = getSvgX(V_maj_s_num || 0);
-  const userSvgY = getSvgY(V_p_num || 0);
+  const userSvgY = getSvgY(Math.min(V_p_num || 0, yMax));
 
   // Grid Ticks
   const xTicks = [];
