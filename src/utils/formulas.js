@@ -13,41 +13,49 @@ export function calculatePHB({
   t_s = 3,   // Start-up and clearance time (s)
   compliance // 'high' or 'low'
 }) {
+  const worksheetNum = parseInt(worksheet) || 1;
+  const V_p_num = parseFloat(V_p) || 0;
+  const V_maj_s_num = parseFloat(V_maj_s) || 0;
+  const V_maj_d_num = parseFloat(V_maj_d) || 0;
+  const L_num = parseFloat(L) || 0;
+  const S_p_num = parseFloat(S_p) || 3.5;
+  const t_s_num = parseFloat(t_s) !== undefined && parseFloat(t_s) !== null && !isNaN(parseFloat(t_s)) ? parseFloat(t_s) : 3.0;
+
   // Step 2: Minimum Pedestrian Volume Check
-  const minPed = worksheet === 1 ? 20 : 14;
-  const meetsMinPed = V_p >= minPed;
+  const minPed = worksheetNum === 1 ? 20 : 14;
+  const meetsMinPed = V_p_num >= minPed;
 
   // Step 3: Signal Warrant Check (SC)
   let SC;
-  if (worksheet === 1) {
+  if (worksheetNum === 1) {
     // Equation for speed <= 35 mph
-    SC = (0.00021 * Math.pow(V_maj_s, 2) - 0.74072 * V_maj_s + 734.125) / 0.75;
+    SC = (0.00021 * Math.pow(V_maj_s_num, 2) - 0.74072 * V_maj_s_num + 734.125) / 0.75;
     if (SC < 133) SC = 133;
   } else {
     // Equation for speed > 35 mph
-    SC = (0.00035 * Math.pow(V_maj_s, 2) - 0.80083 * V_maj_s + 529.197) / 0.75;
+    SC = (0.00035 * Math.pow(V_maj_s_num, 2) - 0.80083 * V_maj_s_num + 529.197) / 0.75;
     if (SC < 93) SC = 93;
   }
 
   // Walking speed adjustment (Step 3d)
   let SC_adj = SC;
-  const hasSpeedReduction = S_p < 3.5;
+  const hasSpeedReduction = S_p_num < 3.5;
   if (hasSpeedReduction) {
     SC_adj = SC * 0.5; // up to 50% reduction (standard is 50%)
   }
 
-  const meetsSignalWarrant = V_p >= SC_adj;
+  const meetsSignalWarrant = V_p_num >= SC_adj;
 
   // Step 4: Pedestrian Delay Estimation
   // Critical Gap (tc)
-  const t_c = (L / S_p) + t_s;
+  const t_c = (L_num / S_p_num) + t_s_num;
 
   // Major road flow rate (v) - rounded to 2 decimal places to match Report Page 72 example
   let raw_v;
-  if (worksheet === 1) {
-    raw_v = V_maj_d / 3600;
+  if (worksheetNum === 1) {
+    raw_v = V_maj_d_num / 3600;
   } else {
-    raw_v = (V_maj_d / 0.7) / 3600; // high-speed adjustment
+    raw_v = (V_maj_d_num / 0.7) / 3600; // high-speed adjustment
   }
   const v = Math.round(raw_v * 100) / 100;
 
@@ -58,7 +66,7 @@ export function calculatePHB({
   }
 
   // Total pedestrian delay (Dp) in pedestrian-hours (ped-h)
-  const D_p = (d_p * V_p) / 3600;
+  const D_p = (d_p * V_p_num) / 3600;
 
   // Step 5: Select Treatment Category
   let treatment = '';
@@ -67,7 +75,7 @@ export function calculatePHB({
   } else if (meetsSignalWarrant) {
     treatment = 'SIGNAL PROPOSED';
   } else {
-    if (worksheet === 1) {
+    if (worksheetNum === 1) {
       if (D_p >= 21.3 || (D_p >= 5.3 && compliance === 'low')) {
         treatment = 'RED';
       } else if (D_p >= 1.3 || (D_p >= 5.3 && compliance === 'high')) {

@@ -2,6 +2,13 @@ import React from 'react';
 
 export default function DelayChart({ inputs, results }) {
   const { worksheet, V_p, V_maj_s, L, S_p, t_s, compliance } = inputs;
+
+  const worksheetNum = parseInt(worksheet) || 1;
+  const L_num = parseFloat(L) || 0;
+  const S_p_num = parseFloat(S_p) || 3.5;
+  const t_s_num = parseFloat(t_s) !== undefined && parseFloat(t_s) !== null && !isNaN(parseFloat(t_s)) ? parseFloat(t_s) : 3.0;
+  const V_maj_s_num = parseFloat(V_maj_s) || 0;
+  const V_p_num = parseFloat(V_p) || 0;
   
   // Chart dimensions & margins
   const width = 600;
@@ -22,10 +29,10 @@ export default function DelayChart({ inputs, results }) {
   // Generate curve points
   const getDelayCurvePoints = (DpVal) => {
     const points = [];
-    const tc = (L / S_p) + t_s;
+    const tc = (L_num / S_p_num) + t_s_num;
     
     for (let x = 0; x <= xMax; x += 30) {
-      const v = worksheet === 1 ? x / 3600 : (x / 0.7) / 3600;
+      const v = worksheetNum === 1 ? x / 3600 : (x / 0.7) / 3600;
       let y = yMax * 2; // Default to off-chart
       if (v > 0) {
         const dp_factor = (Math.exp(v * tc) - v * tc - 1) / v;
@@ -43,14 +50,14 @@ export default function DelayChart({ inputs, results }) {
     const points = [];
     for (let x = 0; x <= xMax; x += 30) {
       let scVal;
-      if (worksheet === 1) {
+      if (worksheetNum === 1) {
         scVal = (0.00021 * x * x - 0.74072 * x + 734.125) / 0.75;
         if (scVal < 133) scVal = 133;
       } else {
         scVal = (0.00035 * x * x - 0.80083 * x + 529.197) / 0.75;
         if (scVal < 93) scVal = 93;
       }
-      if (S_p < 3.5) {
+      if (S_p_num < 3.5) {
         scVal = scVal * 0.5;
       }
       points.push({ x, y: Math.min(scVal, yMax * 2) });
@@ -86,7 +93,7 @@ export default function DelayChart({ inputs, results }) {
   };
 
   // SVG coordinates for No Treatment line
-  const noTreatmentY = worksheet === 1 ? 20 : 14;
+  const noTreatmentY = worksheetNum === 1 ? 20 : 14;
   const noTreatmentSvgY = getSvgY(noTreatmentY);
 
   // 1. Background / Signal Proposed (Dark Red)
@@ -117,11 +124,11 @@ export default function DelayChart({ inputs, results }) {
       y: Math.min(pt.y, warrantPt.y)
     };
   });
-  const crosswalkPath = worksheet === 1 ? getAreaPath(crosswalkPoints) : '';
+  const crosswalkPath = worksheetNum === 1 ? getAreaPath(crosswalkPoints) : '';
 
   // Current user point SVG coordinates
-  const userSvgX = getSvgX(V_maj_s || 0);
-  const userSvgY = getSvgY(V_p || 0);
+  const userSvgX = getSvgX(V_maj_s_num || 0);
+  const userSvgY = getSvgY(V_p_num || 0);
 
   // Grid Ticks
   const xTicks = [0, 300, 600, 900, 1200, 1500, 1800, 2100];
@@ -133,7 +140,7 @@ export default function DelayChart({ inputs, results }) {
         <h3>📈 NCHRP 562 Graphical Solution</h3>
         <div className="chart-legend-row">
           <span className="legend-item"><span className="legend-box grey"></span> No Treatment</span>
-          {worksheet === 1 && <span className="legend-item"><span className="legend-box green"></span> Crosswalk</span>}
+          {worksheetNum === 1 && <span className="legend-item"><span className="legend-box green"></span> Crosswalk</span>}
           <span className="legend-item"><span className="legend-box yellow"></span> Active/Enhanced</span>
           <span className="legend-item"><span className="legend-box red"></span> Red (HAWK)</span>
           <span className="legend-item"><span className="legend-box darkred"></span> Signal Proposed</span>
@@ -314,20 +321,24 @@ export default function DelayChart({ inputs, results }) {
           {/* GRAPH LABELS FOR ZONES */}
           <text x={getSvgX(180)} y={noTreatmentSvgY + (getSvgY(0) - noTreatmentSvgY) / 2 + 5} className="zone-text" textAnchor="middle">No Treatment</text>
           
-          {worksheet === 1 && (
-            <text x={getSvgX(250)} y={getSvgY(60)} className="zone-text white-text" textAnchor="middle">Crosswalk</text>
+          {worksheetNum === 1 && (
+            <text x={getSvgX(300)} y={getSvgY(40)} className="zone-text white-text" textAnchor="middle">Crosswalk</text>
           )}
 
-          <text x={getSvgX(650)} y={getSvgY(180)} className="zone-text" textAnchor="middle">Active / Enhanced</text>
+          <text x={getSvgX(600)} y={getSvgY(75)} className="zone-text" textAnchor="middle">Active / Enhanced</text>
           
-          <text x={getSvgX(1200)} y={getSvgY(250)} className="zone-text white-text" textAnchor="middle">
-            {compliance === 'high' ? 'E/A HC, Red LC*' : 'Red (HAWK)'}
+          <text x={getSvgX(1000)} y={getSvgY(50)} className={`zone-text ${compliance === 'low' ? 'white-text' : ''}`} textAnchor="middle">
+            E/A HC, Red LC*
           </text>
           
-          <text x={getSvgX(1700)} y={getSvgY(450)} className="zone-text white-text" textAnchor="middle">Signal Proposed</text>
+          <text x={getSvgX(1450)} y={getSvgY(60)} className="zone-text white-text" textAnchor="middle">
+            Red (HAWK)
+          </text>
+          
+          <text x={getSvgX(1700)} y={getSvgY(400)} className="zone-text white-text" textAnchor="middle">Signal Proposed</text>
 
           {/* CURRENT OPERATING POINT INDICATOR */}
-          {V_maj_s > 0 && V_p > 0 && userSvgX >= margin.left && userSvgX <= margin.left + plotWidth && userSvgY >= margin.top && userSvgY <= margin.top + plotHeight && (
+          {V_maj_s_num > 0 && V_p_num > 0 && userSvgX >= margin.left && userSvgX <= margin.left + plotWidth && userSvgY >= margin.top && userSvgY <= margin.top + plotHeight && (
             <g>
               {/* Outer pulsing glow */}
               <circle 
@@ -366,7 +377,7 @@ export default function DelayChart({ inputs, results }) {
                   fontSize="10" 
                   fontWeight="bold"
                 >
-                  ({V_maj_s} veh, {V_p} ped)
+                  ({V_maj_s_num} veh, {V_p_num} ped)
                 </text>
               </g>
             </g>
