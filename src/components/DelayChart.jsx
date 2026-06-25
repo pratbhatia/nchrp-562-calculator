@@ -332,7 +332,7 @@ export default function DelayChart({ inputs, results }) {
             <text x={getSvgX(300)} y={getSvgY(40)} className="zone-text white-text" textAnchor="middle">Crosswalk</text>
           )}
 
-          <text x={getSvgX(600)} y={getSvgY(75)} className="zone-text" textAnchor="middle">Active / Enhanced</text>
+          <text x={getSvgX(450)} y={getSvgY(200)} className="zone-text" textAnchor="middle">Active / Enhanced</text>
           
           <text x={getSvgX(1000)} y={getSvgY(50)} className={`zone-text ${compliance === 'low' ? 'white-text' : ''}`} textAnchor="middle">
             E/A HC, Red LC*
