@@ -131,7 +131,10 @@ export default function DelayChart({ inputs, results }) {
   const userSvgY = getSvgY(V_p_num || 0);
 
   // Grid Ticks
-  const xTicks = [0, 300, 600, 900, 1200, 1500, 1800, 2100];
+  const xTicks = [];
+  for (let xVal = 0; xVal <= 2100; xVal += 100) {
+    xTicks.push(xVal);
+  }
   const yTicks = [0, 100, 200, 300, 400, 500, 600, 700];
 
   return (
@@ -254,14 +257,16 @@ export default function DelayChart({ inputs, results }) {
                 stroke="#666" 
                 strokeWidth="1.5"
               />
-              <text 
-                x={getSvgX(tick)} 
-                y={margin.top + plotHeight + 20} 
-                className="axis-label-tick"
-                textAnchor="middle"
-              >
-                {tick}
-              </text>
+              {tick % 300 === 0 && (
+                <text 
+                  x={getSvgX(tick)} 
+                  y={margin.top + plotHeight + 20} 
+                  className="axis-label-tick"
+                  textAnchor="middle"
+                >
+                  {tick}
+                </text>
+              )}
             </g>
           ))}
 
