@@ -132,6 +132,32 @@ export default function DelayChart({ inputs, results }) {
   const userSvgX = getSvgX(V_maj_s_num || 0);
   const userSvgY = getSvgY(Math.min(V_p_num || 0, yMax));
 
+  // Dynamic Y coordinates for text labels to ensure they stay centered within their zones
+  const getIdx = (xVal) => Math.round(xVal / 30);
+
+  // 1. Crosswalk label at x = 300 (Worksheet 1 only)
+  const idx300 = getIdx(300);
+  const yGreen300 = Math.min(delay1_3_Points[idx300].y, warrantPoints[idx300].y);
+  const yCrosswalkLabel = noTreatmentY + (yGreen300 - noTreatmentY) / 2;
+
+  // 2. Active / Enhanced label at x = 540
+  const idx540 = getIdx(540);
+  const yGreen540 = worksheetNum === 1 ? Math.min(delay1_3_Points[idx540].y, warrantPoints[idx540].y) : noTreatmentY;
+  const yActive540 = Math.min(activeLimitPoints[idx540].y, warrantPoints[idx540].y);
+  const yActiveEnhancedLabel = yGreen540 + (yActive540 - yGreen540) / 2;
+
+  // 3. E/A HC, Red LC* label at x = 990
+  const idx990 = getIdx(990);
+  const yLow990 = Math.min(delay5_3_Points[idx990].y, warrantPoints[idx990].y);
+  const yHigh990 = Math.min(delay21_3_Points[idx990].y, warrantPoints[idx990].y);
+  const yEaHcLabel = yLow990 + (yHigh990 - yLow990) / 2;
+
+  // 4. Red (HAWK) label at x = 1440
+  const idx1440 = getIdx(1440);
+  const yActive1440 = Math.min(activeLimitPoints[idx1440].y, warrantPoints[idx1440].y);
+  const yWarrant1440 = warrantPoints[idx1440].y;
+  const yRedLabel = yActive1440 + (yWarrant1440 - yActive1440) / 2;
+
   // Grid Ticks
   const xTicks = [];
   for (let xVal = 0; xVal <= 2100; xVal += 100) {
@@ -329,16 +355,16 @@ export default function DelayChart({ inputs, results }) {
           <text x={getSvgX(180)} y={noTreatmentSvgY + (getSvgY(0) - noTreatmentSvgY) / 2 + 5} className="zone-text" textAnchor="middle">No Treatment</text>
           
           {worksheetNum === 1 && (
-            <text x={getSvgX(300)} y={getSvgY(40)} className="zone-text white-text" textAnchor="middle">Crosswalk</text>
+            <text x={getSvgX(300)} y={getSvgY(yCrosswalkLabel)} className="zone-text white-text" textAnchor="middle">Crosswalk</text>
           )}
 
-          <text x={getSvgX(450)} y={getSvgY(200)} className="zone-text" textAnchor="middle">Active / Enhanced</text>
+          <text x={getSvgX(540)} y={getSvgY(yActiveEnhancedLabel)} className="zone-text" textAnchor="middle">Active / Enhanced</text>
           
-          <text x={getSvgX(1000)} y={getSvgY(50)} className={`zone-text ${compliance === 'low' ? 'white-text' : ''}`} textAnchor="middle">
+          <text x={getSvgX(990)} y={getSvgY(yEaHcLabel)} className={`zone-text ${compliance === 'low' ? 'white-text' : ''}`} textAnchor="middle">
             E/A HC, Red LC*
           </text>
           
-          <text x={getSvgX(1450)} y={getSvgY(60)} className="zone-text white-text" textAnchor="middle">
+          <text x={getSvgX(1440)} y={getSvgY(yRedLabel)} className="zone-text white-text" textAnchor="middle">
             Red (HAWK)
           </text>
           
