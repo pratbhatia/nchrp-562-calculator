@@ -28,12 +28,14 @@ export function calculatePHB({
   // Step 3: Signal Warrant Check (SC)
   let SC;
   if (worksheetNum === 1) {
-    // Equation for speed <= 35 mph
-    SC = (0.00021 * Math.pow(V_maj_s_num, 2) - 0.74072 * V_maj_s_num + 734.125) / 0.75;
+    // Equation for speed <= 35 mph, capped at the parabola vertex (1764 veh/h)
+    const V_maj_cap = Math.min(V_maj_s_num, 1764);
+    SC = (0.00021 * Math.pow(V_maj_cap, 2) - 0.74072 * V_maj_cap + 734.125) / 0.75;
     if (SC < 133) SC = 133;
   } else {
-    // Equation for speed > 35 mph
-    SC = (0.00035 * Math.pow(V_maj_s_num, 2) - 0.80083 * V_maj_s_num + 529.197) / 0.75;
+    // Equation for speed > 35 mph, capped at the parabola vertex (1144 veh/h)
+    const V_maj_cap = Math.min(V_maj_s_num, 1144);
+    SC = (0.00035 * Math.pow(V_maj_cap, 2) - 0.80083 * V_maj_cap + 529.197) / 0.75;
     if (SC < 93) SC = 93;
   }
 

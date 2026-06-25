@@ -51,10 +51,12 @@ export default function DelayChart({ inputs, results }) {
     for (let x = 0; x <= xMax; x += 30) {
       let scVal;
       if (worksheetNum === 1) {
-        scVal = (0.00021 * x * x - 0.74072 * x + 734.125) / 0.75;
+        const xCap = Math.min(x, 1764);
+        scVal = (0.00021 * xCap * xCap - 0.74072 * xCap + 734.125) / 0.75;
         if (scVal < 133) scVal = 133;
       } else {
-        scVal = (0.00035 * x * x - 0.80083 * x + 529.197) / 0.75;
+        const xCap = Math.min(x, 1144);
+        scVal = (0.00035 * xCap * xCap - 0.80083 * xCap + 529.197) / 0.75;
         if (scVal < 93) scVal = 93;
       }
       if (S_p_num < 3.5) {
