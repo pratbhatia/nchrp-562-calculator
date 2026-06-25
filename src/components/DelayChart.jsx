@@ -133,7 +133,7 @@ export default function DelayChart({ inputs, results }) {
         <h3>📈 NCHRP 562 Graphical Solution</h3>
         <div className="chart-legend-row">
           <span className="legend-item"><span className="legend-box grey"></span> No Treatment</span>
-          {worksheet === 1 && <span className="legend-item"><span className="legend-box blue"></span> Crosswalk</span>}
+          {worksheet === 1 && <span className="legend-item"><span className="legend-box green"></span> Crosswalk</span>}
           <span className="legend-item"><span className="legend-box yellow"></span> Active/Enhanced</span>
           <span className="legend-item"><span className="legend-box red"></span> Red (HAWK)</span>
           <span className="legend-item"><span className="legend-box darkred"></span> Signal Proposed</span>
@@ -167,7 +167,7 @@ export default function DelayChart({ inputs, results }) {
 
           {/* 4. CROSSWALK AREA */}
           {worksheet === 1 && (
-            <path d={crosswalkPath} fill="#1565C0" opacity="0.85" />
+            <path d={crosswalkPath} fill="#2E7D32" opacity="0.85" />
           )}
 
           {/* 5. NO TREATMENT AREA */}
@@ -192,21 +192,29 @@ export default function DelayChart({ inputs, results }) {
             strokeDasharray="4 4"
           />
 
-          {/* Delay 1.3 Curve (Crosswalk limit) */}
+          {/* Delay 1.3 Curve (Crosswalk limit - Worksheet 1 only) */}
           {worksheet === 1 && (
             <path 
               d={getLinePath(delay1_3_Points)} 
               fill="none" 
-              stroke="#0D47A1" 
+              stroke="#1B5E20" 
               strokeWidth="2.5" 
             />
           )}
 
-          {/* Active limit Curve (5.3 or 21.3) */}
+          {/* Delay 5.3 Curve */}
           <path 
-            d={getLinePath(activeLimitPoints)} 
+            d={getLinePath(delay5_3_Points)} 
             fill="none" 
             stroke="#F57F17" 
+            strokeWidth="2.5" 
+          />
+
+          {/* Delay 21.3 Curve */}
+          <path 
+            d={getLinePath(delay21_3_Points)} 
+            fill="none" 
+            stroke="#E65100" 
             strokeWidth="2.5" 
           />
 

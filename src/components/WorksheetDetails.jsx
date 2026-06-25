@@ -43,7 +43,7 @@ export default function WorksheetDetails({ inputs, setInputs, results }) {
 
   const getTreatmentColorClass = (tr) => {
     if (tr === 'NO TREATMENT') return 'treatment-val-grey';
-    if (tr === 'CROSSWALK') return 'treatment-val-blue';
+    if (tr === 'CROSSWALK') return 'treatment-val-green';
     if (tr === 'ACTIVE OR ENHANCED') return 'treatment-val-yellow';
     if (tr === 'RED' || tr === 'SIGNAL PROPOSED') return 'treatment-val-red';
     return '';
@@ -417,7 +417,7 @@ export default function WorksheetDetails({ inputs, setInputs, results }) {
           </tr>
 
           {/* Condition Row 1 (RED) */}
-          <tr className={meetsMinPed && !meetsSignalWarrant && (D_p >= 21.3 || (D_p >= 5.3 && compliance === 'low')) ? 'active-treatment-row' : ''}>
+          <tr className={meetsMinPed && !meetsSignalWarrant && (D_p >= 21.3 || (D_p >= 5.3 && compliance === 'low')) ? 'active-treatment-row active-red' : ''}>
             <td className="instruction-col font-medium">
               Dp ≥ 21.3 h (Comp = high or low)<br />
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR<br />
@@ -434,8 +434,8 @@ export default function WorksheetDetails({ inputs, setInputs, results }) {
           {/* Condition Row 2 (ACTIVE OR ENHANCED) */}
           <tr className={
             worksheet === 1 
-              ? (meetsMinPed && !meetsSignalWarrant && ((D_p >= 1.3 && D_p < 5.3) || (D_p >= 5.3 && D_p < 21.3 && compliance === 'high')) ? 'active-treatment-row' : '')
-              : (meetsMinPed && !meetsSignalWarrant && (D_p < 5.3 || (D_p >= 5.3 && D_p < 21.3 && compliance === 'high')) ? 'active-treatment-row' : '')
+              ? (meetsMinPed && !meetsSignalWarrant && ((D_p >= 1.3 && D_p < 5.3) || (D_p >= 5.3 && D_p < 21.3 && compliance === 'high')) ? 'active-treatment-row active-yellow' : '')
+              : (meetsMinPed && !meetsSignalWarrant && (D_p < 5.3 || (D_p >= 5.3 && D_p < 21.3 && compliance === 'high')) ? 'active-treatment-row active-yellow' : '')
           }>
             <td className="instruction-col font-medium">
               {worksheet === 1 
@@ -473,7 +473,7 @@ export default function WorksheetDetails({ inputs, setInputs, results }) {
 
           {/* Condition Row 3 (CROSSWALK - Worksheet 1 only) */}
           {worksheet === 1 && (
-            <tr className={meetsMinPed && !meetsSignalWarrant && D_p < 1.3 ? 'active-treatment-row' : ''}>
+            <tr className={meetsMinPed && !meetsSignalWarrant && D_p < 1.3 ? 'active-treatment-row active-green' : ''}>
               <td className="instruction-col font-medium">
                 Dp &lt; 1.3 h (Comp = high or low)
               </td>

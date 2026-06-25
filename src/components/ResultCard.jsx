@@ -7,8 +7,8 @@ const TREATMENT_STYLES = {
     description: 'The minimum peak-hour pedestrian volume is not met. Consider geometric elements (e.g. median refuge islands, curb extensions, traffic calming) if feasible, but active traffic control devices (signs, signals, beacons) are not recommended.'
   },
   'CROSSWALK': {
-    colorClass: 'treatment-blue',
-    title: '🔵 Crosswalk Treatment Recommended',
+    colorClass: 'treatment-green',
+    title: '🟢 Crosswalk Treatment Recommended',
     description: 'Marked crosswalk and pedestrian warning signs (W11-2) are appropriate. Motorists generally yield under low delay conditions on lower-speed roads.'
   },
   'ACTIVE OR ENHANCED': {

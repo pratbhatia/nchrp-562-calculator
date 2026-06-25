@@ -57,7 +57,7 @@ export default function App() {
       <header className="app-header no-print">
         <div className="header-title-container">
           <svg className="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="48" height="48" style={{ marginRight: '12px' }}>
-            <rect width="100" height="100" rx="20" fill="#3b82f6" />
+            <rect width="100" height="100" rx="20" fill="#16a34a" />
             <rect x="15" y="20" width="10" height="60" fill="#ffffff" />
             <rect x="35" y="20" width="10" height="60" fill="#ffffff" />
             <rect x="55" y="20" width="10" height="60" fill="#ffffff" />
